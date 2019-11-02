@@ -8,6 +8,7 @@ namespace VirtualMachine.CPU
     public class Cpu : ICpu
     {
         private static readonly Word InstructionPointerAddress = Word.Zero;
+        private bool running;
 
         public Cpu(IInstructionSet instructionSet, ISupervisor supervisor)
         {
@@ -25,12 +26,16 @@ namespace VirtualMachine.CPU
             set => memory.WriteWord(InstructionPointerAddress, value);
         }
 
+        public void stop() {
+            running = false;
+        }
+
         public void Run(IMemory memory)
         {
             if (Interlocked.CompareExchange(ref this.memory, memory, null) != null)
                 throw new CpuException("Cpu already run");
-
-            while (true)
+            running = true;
+            while (running)
             {
                 Step();
                 Thread.Sleep(StepDelay);
