@@ -45,6 +45,10 @@ namespace VirtualMachine.CPU.InstructionSet
             }
             
             AddInstruction(new Exit());
+            
+            
+            AddInstruction(new Sleep());
+            
         }
 
         public IInstruction FindInstruction(Word opCode) => instructions.TryGetValue(opCode, out var instruction) ? instruction : null;
