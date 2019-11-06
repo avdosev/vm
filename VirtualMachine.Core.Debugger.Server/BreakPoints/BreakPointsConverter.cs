@@ -1,5 +1,6 @@
 ﻿using VirtualMachine.Core;
 using VirtualMachine.Core.Debugger.Model;
+using VirtualMachine.Core.Debugger.Server.BreakPoints.Conditional;
 
 namespace VirtualMachine.Core.Debugger.Server.BreakPoints
 {
@@ -7,11 +8,19 @@ namespace VirtualMachine.Core.Debugger.Server.BreakPoints
 	{
 		public IBreakPoint FromDto(BreakPointDto dto)
 		{
+			if (dto.Condition != null)
+				return new ConditionalBreakPoint(
+					new Word(dto.Address), 
+					dto.Name, 
+					ConditionExpression.Parse(dto.Condition));
+			
 			return new BreakPoint(new Word(dto.Address), dto.Name);
 		}
 
 		public BreakPointDto ToDto(IBreakPoint bp)
 		{
+			
+			
 			return new BreakPointDto
 			{
 				Name = bp.Name,
@@ -31,5 +40,18 @@ namespace VirtualMachine.Core.Debugger.Server.BreakPoints
 			public string Name { get; }
 			public bool ShouldStop(IReadOnlyMemory memory) => true;
 		}
+		
+		private class ConditionalBreakPoint : BreakPoint
+		{
+			public ConditionalBreakPoint(Word address, string name, ConditionExpression condition) 
+				: base(address, name)
+			{
+				Condition = condition;
+			}
+			public ConditionExpression Condition { get; }
+			public new bool ShouldStop(IReadOnlyMemory memory) => Condition.Evaluate(memory);
+		}
 	}
+	
+	
 }

@@ -4,5 +4,6 @@
 	{
 		public string Name { get; set; }
 		public uint Address { get; set; }
+		public string Condition { get; set; }
 	}
 }

@@ -9,6 +9,7 @@ namespace VirtualMachine.Core.Debugger.Client
         public CommandSet()
         {
             Add(new AddBreakPointCommand());
+            Add(new AddConditionalBreakPointCommand());
             Add(new BreakPointsListCommand());
             Add(new ContinueCommand());
             Add(new GetDebugModeCommand());
